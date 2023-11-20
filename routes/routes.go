@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -18,5 +19,7 @@ func HandleRequest() {
 	r.HandleFunc("/api/personas", controllers.CreatePersona).Methods("POST")
 	r.HandleFunc("/api/personas/{id}", controllers.DeletePersona).Methods("DELETE")
 	r.HandleFunc("/api/personas/{id}", controllers.EditPersona).Methods("PATCH")
-	log.Fatal(http.ListenAndServe(":8000", r))
+
+	handler := handlers.CORS(handlers.AllowedOrigins([]string{"*"}))(r)
+	log.Fatal(http.ListenAndServe(":8000", handler))
 }
