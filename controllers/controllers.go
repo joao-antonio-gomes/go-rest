@@ -50,7 +50,27 @@ func DeletePersona(w http.ResponseWriter, r *http.Request) {
 
 	if persona.Id == 0 {
 		log.Panic("Não existe personalidade com ID informado: ", id)
+		return
 	}
 
 	database.DB.Delete(&persona, id)
+}
+
+func EditPersona(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var persona models.Persona
+	database.DB.First(&persona, id)
+
+	if persona.Id == 0 {
+		log.Panic("Não existe personalidade com ID informado: ", id)
+		return
+	}
+
+	json.NewDecoder(r.Body).Decode(&persona)
+
+	database.DB.Save(&persona)
+
+	json.NewEncoder(w).Encode(persona)
 }
